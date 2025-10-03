@@ -32,9 +32,3 @@ build/
 ### VS Code ###
 .vscode/
 
-# Oracle Wallet
-/oracle-wallet
-
-# Spring Boot configs
-/src/main/resources/application-dev.properties
-/src/main/resources/application-test.properties
