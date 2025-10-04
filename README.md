@@ -113,4 +113,4 @@
 
 ### ERD
 
-[!ERD](/diagrams/ERD.png)
+[!ERD](./diagrams/ERD.png)
