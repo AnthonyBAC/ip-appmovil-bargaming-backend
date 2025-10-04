@@ -106,3 +106,11 @@
 - Compra por oferta: cliente hace oferta (POST /ofertas) → vendedor acepta (PUT /ofertas/{id}/aceptar) → se genera la venta pendiente.
 - Pago confirmado: se actualiza VENTAS.estado_venta = PAGADA.
 - Entrega confirmada: VENTAS.estado_venta = ENTREGADA.
+
+---
+
+## Diagrams
+
+### ERD
+
+[!Alt ERD](/diagrams/ERD.png)
