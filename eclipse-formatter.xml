@@ -1,5 +1,0 @@
-<profiles version="12">
-    <profile kind="CodeFormatterProfile" name="Custom" version="12">
-        <setting id="org.eclipse.jdt.core.formatter.blank_lines_between_methods" value="0"/>
-    </profile>
-</profiles>
