@@ -52,7 +52,6 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    // Imágenes
     @GetMapping("/{id}/imagenes")
     public ResponseEntity<List<ImageProduct>> getImages(@PathVariable Long id) {
         return ResponseEntity.ok(imageService.getImagesByProductId(id));
