@@ -2,7 +2,7 @@
 
 ---
 
-## Tecnologías principales
+## **Tecnologías principales**
 
 - **Java 17+**
 - **Spring Boot** (Maven)
@@ -13,140 +13,139 @@
 
 ---
 
-## Estructura general
+## **Estructura general de módulos**
+
+1. **Auth & Usuarios (`auth`)**
+   Registro, login y control de roles (**CLIENTE**, **VENDEDOR**, **ADMIN**).
+2. **Productos (`products`)**
+   Publicación, edición y gestión de productos e imágenes.
+3. **Carrito (`cart`)**
+   Administración del carrito de compras por cliente.
+4. **Ventas (`ventas`)**
+   Registro de compras, detalle de productos y estado de venta.
+5. **Administrador (`admin`)**
+   Control de usuarios y monitoreo general del sistema.
 
 ---
 
-## 1. Autenticación y Usuarios (`auth`)
+## **1. Autenticación y Usuarios (`auth`)**
 
-Módulo responsable del registro, login y control de roles (**CLIENTE**, **VENDEDOR**, **ADMIN**).
+Módulo encargado de registrar usuarios, iniciar sesión y gestionar accesos por rol.
 
-### Endpoints principales
+### **Endpoints principales**
 
-| Método | Ruta                 | Descripción                                        | Rol      |
-| ------ | -------------------- | -------------------------------------------------- | -------- |
-| POST   | `/api/auth/register` | Registrar nuevo usuario (rol por defecto: CLIENTE) | Público  |
-| POST   | `/api/auth/login`    | Iniciar sesión y obtener JWT                       | Público  |
-| GET    | `/api/client/demo`   | Prueba de acceso CLIENTE                           | CLIENTE  |
-| GET    | `/api/seller/demo`   | Prueba de acceso VENDEDOR                          | VENDEDOR |
-| GET    | `/api/admin/demo`    | Prueba de acceso ADMIN                             | ADMIN    |
-| GET    | `/api/admin/users`   | Listar todos los usuarios                          | ADMIN    |
+| Método   | Ruta                 | Descripción                                        | Rol      |
+| -------- | -------------------- | -------------------------------------------------- | -------- |
+| **POST** | `/api/auth/register` | Registrar nuevo usuario (rol por defecto: CLIENTE) | Público  |
+| **POST** | `/api/auth/login`    | Iniciar sesión y obtener token JWT                 | Público  |
+| **GET**  | `/api/client/demo`   | Prueba de acceso CLIENTE                           | CLIENTE  |
+| **GET**  | `/api/seller/demo`   | Prueba de acceso VENDEDOR                          | VENDEDOR |
+| **GET**  | `/api/admin/demo`    | Prueba de acceso ADMIN                             | ADMIN    |
+| **GET**  | `/api/admin/users`   | Listar todos los usuarios registrados              | ADMIN    |
 
-> Los usuarios **ADMIN** se crean manualmente o desde `DataInitializer`.
-> Todos los nuevos registros obtienen **rol CLIENTE por defecto**.
-
----
-
-## 2. Productos (`products`)
-
-Módulo para publicación y administración de productos.
-
-### Endpoints
-
-| Método | Ruta                           | Descripción                                                 | Rol      |
-| ------ | ------------------------------ | ----------------------------------------------------------- | -------- |
-| POST   | `/api/productos`               | Crear producto                                              | VENDEDOR |
-| GET    | `/api/productos`               | Listar productos (con filtros por categoría, marca o texto) | Público  |
-| GET    | `/api/productos/{id}`          | Ver detalle de producto                                     | Público  |
-| PUT    | `/api/productos/{id}`          | Editar producto (solo propietario)                          | VENDEDOR |
-| DELETE | `/api/productos/{id}`          | Eliminar producto                                           | VENDEDOR |
-| POST   | `/api/productos/{id}/imagenes` | Subir imágenes del producto                                 | VENDEDOR |
-| GET    | `/api/productos/{id}/imagenes` | Listar imágenes asociadas                                   | Público  |
+> Los usuarios con **rol ADMIN** se crean manualmente o mediante inicialización de datos.
+> Los nuevos registros obtienen el **rol CLIENTE por defecto**.
 
 ---
 
-## 3. Ofertas (`offers`)
+## **2. Productos (`products`)**
 
-Permite a los clientes enviar ofertas por productos que las acepten.
+Módulo responsable de la gestión de productos publicados por vendedores y las imágenes asociadas.
 
-| Método | Ruta                                 | Descripción                                  | Rol              |
-| ------ | ------------------------------------ | -------------------------------------------- | ---------------- |
-| POST   | `/api/ofertas`                       | Crear oferta (si el producto acepta ofertas) | CLIENTE          |
-| GET    | `/api/ofertas/vendedor/{idVendedor}` | Listar ofertas recibidas                     | VENDEDOR         |
-| PUT    | `/api/ofertas/{id}/aceptar`          | Aceptar oferta                               | VENDEDOR         |
-| PUT    | `/api/ofertas/{id}/rechazar`         | Rechazar oferta                              | VENDEDOR         |
-| GET    | `/api/ofertas/{id}`                  | Ver detalle de una oferta                    | CLIENTE/VENDEDOR |
+### **Endpoints**
+
+| Método     | Ruta                           | Descripción                                              | Rol      |
+| ---------- | ------------------------------ | -------------------------------------------------------- | -------- |
+| **POST**   | `/api/productos`               | Crear nuevo producto                                     | VENDEDOR |
+| **GET**    | `/api/productos`               | Listar productos (filtros por categoría, marca o nombre) | Público  |
+| **GET**    | `/api/productos/{id}`          | Ver detalle de un producto                               | Público  |
+| **PUT**    | `/api/productos/{id}`          | Editar producto                                          | VENDEDOR |
+| **DELETE** | `/api/productos/{id}`          | Eliminar producto                                        | VENDEDOR |
+| **POST**   | `/api/productos/{id}/imagenes` | Subir imagen al producto                                 | VENDEDOR |
+| **GET**    | `/api/productos/{id}/imagenes` | Listar imágenes asociadas                                | Público  |
 
 ---
 
-## 4. Carrito (`cart`)
+## **3. Carrito (`cart`)**
 
 Módulo para manejar el carrito temporal de un cliente.
 
-| Método | Ruta                                             | Descripción                 | Rol     |
-| ------ | ------------------------------------------------ | --------------------------- | ------- |
-| POST   | `/api/carrito`                                   | Agregar producto al carrito | CLIENTE |
-| GET    | `/api/carrito/{idCliente}`                       | Ver contenido del carrito   | CLIENTE |
-| DELETE | `/api/carrito/{idCliente}/producto/{idProducto}` | Quitar producto             | CLIENTE |
-| DELETE | `/api/carrito/{idCliente}/vaciar`                | Vaciar carrito              | CLIENTE |
+### **Endpoints**
+
+| Método     | Ruta                                                       | Descripción                        | Rol     |
+| ---------- | ---------------------------------------------------------- | ---------------------------------- | ------- |
+| **GET**    | `/api/carrito/{clienteId}`                                 | Ver contenido del carrito          | CLIENTE |
+| **POST**   | `/api/carrito/{clienteId}/agregar/{productoId}?cantidad=1` | Agregar producto al carrito        | CLIENTE |
+| **PUT**    | `/api/carrito/{cartId}?cantidad=5`                         | Actualizar cantidad de un producto | CLIENTE |
+| **DELETE** | `/api/carrito/item/{cartId}`                               | Quitar producto del carrito        | CLIENTE |
+| **DELETE** | `/api/carrito/{clienteId}/vaciar`                          | Vaciar carrito completo            | CLIENTE |
 
 ---
 
-## 5. Ventas (`sales`)
+## **4. Ventas (`ventas`)**
 
-Maneja las compras directas y las generadas a partir de ofertas aceptadas.
+Maneja las compras directas realizadas desde el carrito y el seguimiento de su estado.
 
-| Método | Ruta                                | Descripción                                               | Rol              |
-| ------ | ----------------------------------- | --------------------------------------------------------- | ---------------- |
-| POST   | `/api/ventas`                       | Registrar nueva venta                                     | CLIENTE          |
-| GET    | `/api/ventas/cliente/{idCliente}`   | Listar compras del cliente                                | CLIENTE          |
-| GET    | `/api/ventas/vendedor/{idVendedor}` | Listar ventas del vendedor                                | VENDEDOR         |
-| GET    | `/api/ventas/{id}`                  | Ver detalle de venta                                      | CLIENTE/VENDEDOR |
-| PUT    | `/api/ventas/{id}/estado`           | Actualizar estado (PAGADA, ENVIADA, ENTREGADA, CANCELADA) | VENDEDOR/ADMIN   |
+### **Endpoints**
 
----
-
-## 6. Administración (`admin`)
-
-Gestión global del sistema y estadísticas.
-
-| Método | Ruta                    | Descripción                        |
-| ------ | ----------------------- | ---------------------------------- |
-| GET    | `/api/admin/users`      | Listar usuarios                    |
-| DELETE | `/api/admin/users/{id}` | Eliminar usuario                   |
-| GET    | `/api/admin/ventas`     | Estadísticas de ventas             |
-| GET    | `/api/admin/productos`  | Listar productos activos/inactivos |
-| GET    | `/api/admin/reportes`   | Generar reportes del sistema       |
+| Método   | Ruta                                     | Descripción                                                        | Rol                |
+| -------- | ---------------------------------------- | ------------------------------------------------------------------ | ------------------ |
+| **POST** | `/api/ventas/{clienteId}`                | Registrar venta desde el carrito                                   | CLIENTE            |
+| **GET**  | `/api/ventas/cliente/{idCliente}`        | Listar compras de un cliente                                       | CLIENTE            |
+| **GET**  | `/api/ventas/vendedor/{idVendedor}`      | Listar ventas de un vendedor                                       | VENDEDOR           |
+| **GET**  | `/api/ventas/{id}/detalle`               | Ver detalle de una venta                                           | CLIENTE / VENDEDOR |
+| **PUT**  | `/api/ventas/{id}/estado?estado=ENVIADA` | Actualizar estado de venta (PAGADA, ENVIADA, ENTREGADA, CANCELADA) | VENDEDOR / ADMIN   |
 
 ---
 
-## Flujo principal de negocio
+## **5. Administración (`admin`)**
+
+Gestión general del sistema, usuarios y monitoreo.
+
+### **Endpoints**
+
+| Método     | Ruta                    | Descripción                           | Rol   |
+| ---------- | ----------------------- | ------------------------------------- | ----- |
+| **GET**    | `/api/admin/users`      | Listar todos los usuarios registrados | ADMIN |
+| **DELETE** | `/api/admin/users/{id}` | Eliminar usuario del sistema          | ADMIN |
+
+---
+
+## **Flujo principal de negocio**
 
 1. **Publicación:**
-   Vendedor publica un producto (`POST /api/productos`).
+   El vendedor publica un producto mediante `POST /api/productos`.
+
 2. **Compra directa:**
-   Cliente lo agrega al carrito y genera la venta (`POST /api/ventas`).
-3. **Compra por oferta:**
-   Cliente crea oferta → vendedor acepta → se genera una venta pendiente.
-4. **Pago confirmado:**
-   `VENTAS.estado_venta = PAGADA`
-5. **Entrega confirmada:**
-   `VENTAS.estado_venta = ENTREGADA`
+   El cliente agrega productos al carrito y genera la venta con `POST /api/ventas/{clienteId}`.
+
+3. **Pago confirmado:**
+   Se marca la venta como `PAGADA`.
+
+4. **Actualización de estado:**
+   El vendedor o administrador puede cambiar el estado (`ENVIADA`, `ENTREGADA`, `CANCELADA`) usando `PUT /api/ventas/{id}/estado`.
 
 ---
 
-## Roles y permisos
+## **Roles y permisos**
 
-| Rol          | Acceso                                                       |
-| ------------ | ------------------------------------------------------------ |
-| **CLIENTE**  | Navegar, ofertar, comprar, usar carrito                      |
-| **VENDEDOR** | Publicar y administrar productos, gestionar ofertas y ventas |
-| **ADMIN**    | Control total: usuarios, productos y reportes                |
+| Rol          | Acceso                                           |
+| ------------ | ------------------------------------------------ |
+| **CLIENTE**  | Navegar, agregar al carrito, comprar productos   |
+| **VENDEDOR** | Publicar y administrar productos, revisar ventas |
+| **ADMIN**    | Control total del sistema, usuarios y ventas     |
 
 ---
 
-## Diagrama ERD
+## **Diagrama ERD**
 
 ![ERD](./diagrams/ERD.png)
 
----
-
-## Estado actual (Octubre 2025)
-
-OK / Módulo `auth` completo y funcional
-OK / Roles y seguridad por JWT configurados
-OK / Integración con Oracle DB
-OK / Estructura modular lista para expansión
-NOTOK / En desarrollo: módulos `productos`, `ofertas`, `carrito`, `ventas`
-
----
+| Módulo              | Estado                                       |
+| ------------------- | -------------------------------------------- |
+| **Auth / Usuarios** | Completo y funcional                         |
+| **Productos**       | Completo y funcional                         |
+| **Carrito**         | Completo y funcional                         |
+| **Ventas**          | Completo y funcional                         |
+| **Administrador**   | Completo (listado y eliminación de usuarios) |
+| **Ofertas**         | No implementado (no requerido)               |
