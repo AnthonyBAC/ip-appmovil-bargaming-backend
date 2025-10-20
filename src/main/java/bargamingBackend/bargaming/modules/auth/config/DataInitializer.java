@@ -29,5 +29,4 @@ public class DataInitializer {
             System.out.println(">>> Usuario DEV creado (dev@example.com / 12345678)");
         }
     }
-
 }

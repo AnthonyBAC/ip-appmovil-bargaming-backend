@@ -9,7 +9,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@Configuration @EnableWebSecurity
+@Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -24,7 +25,8 @@ public class SecurityConfig {
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/register", "/api/auth/login", "/api/productos").permitAll()
                         .requestMatchers("/api/client/**").hasAuthority("CLIENTE").requestMatchers("/api/seller/**")
                         .hasAuthority("VENDEDOR").requestMatchers("/api/admin/**").hasAuthority("ADMIN").anyRequest()
                         .authenticated())
