@@ -26,9 +26,19 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private JWTService jwtService;
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
+        String path = request.getServletPath();
+
+        // 🚫 Ignorar rutas públicas
+        if (path.startsWith("/api/auth/login") || path.startsWith("/api/auth/register")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 🔐 Revisar encabezado Authorization
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -38,31 +48,35 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
 
+        // ⚠️ Validar token
         if (!jwtService.validateToken(token)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Token inválido o expirado");
             return;
         }
 
-        // 🔹 Extraer claims
-        Claims claims = Jwts.parserBuilder().setSigningKey(jwtService.getSecretKeyBytes()).build().parseClaimsJws(token)
+        // ✅ Extraer claims
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(jwtService.getSecretKeyBytes())
+                .build()
+                .parseClaimsJws(token)
                 .getBody();
 
         String email = claims.getSubject();
         String role = (String) claims.get("role");
 
-        // 🧠 Log para depurar
+        // 🧠 Log para depuración
         System.out.println(">>> Token válido para: " + email + " con rol: " + role);
 
-        // 🔹 Crear la autoridad (rol)
+        // Crear autoridad y registrar autenticación
         var authority = new SimpleGrantedAuthority(role);
-
-        // 🔹 Crear autenticación
-        var authentication = new UsernamePasswordAuthenticationToken(email, null, Collections.singletonList(authority));
-
-        // 🔹 Registrar autenticación en el contexto
+        var authentication = new UsernamePasswordAuthenticationToken(
+                email,
+                null,
+                Collections.singletonList(authority));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        // Continuar con la cadena
         filterChain.doFilter(request, response);
     }
 }
