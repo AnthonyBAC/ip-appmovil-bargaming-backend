@@ -7,17 +7,19 @@ import bargamingBackend.bargaming.modules.auth.service.JWTService;
 import bargamingBackend.bargaming.modules.auth.service.UserService;
 import jakarta.validation.Valid;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-@RestController @RequestMapping("/api/auth")
+@RestController
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final UserService userService;
     private final JWTService jwtService;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     public AuthController(UserService userService, JWTService jwtService) {
@@ -33,7 +35,7 @@ public class AuthController {
             user.setEmail(request.getEmail());
             user.setDireccion(request.getDireccion());
             user.setPhone(request.getPhone());
-            user.setPassword(request.getPassword());
+            user.setPassword(passwordEncoder.encode(request.getPassword())); // ✅ Encriptar aquí
             user.setRole(request.getRole());
 
             User savedUser = userService.saveUser(user);
@@ -54,7 +56,6 @@ public class AuthController {
             }
 
             User user = userOpt.get();
-            var passwordEncoder = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
 
             if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                 return new ResponseEntity<>("Contraseña incorrecta", HttpStatus.UNAUTHORIZED);
@@ -62,12 +63,15 @@ public class AuthController {
 
             String token = jwtService.generateToken(user);
 
-            return ResponseEntity.ok(Map.of("message", "Login exitoso", "token", token, "email", user.getEmail(),
+            return ResponseEntity.ok(Map.of(
+                    "message", "Login exitoso",
+                    "token", token,
+                    "email", user.getEmail(),
                     "role", user.getRole()));
 
         } catch (Exception e) {
-            return new ResponseEntity<>("Error al iniciar sesión: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error al iniciar sesión: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }
