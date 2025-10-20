@@ -48,7 +48,6 @@ public class JWTServiceImpl implements JWTService {
         return claims.getSubject();
     }
 
-    // 🔹 Método que necesita el filtro para obtener la clave
     public byte[] getSecretKeyBytes() {
         return secretKey.getBytes();
     }

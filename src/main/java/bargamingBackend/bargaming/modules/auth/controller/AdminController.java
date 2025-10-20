@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController @RequestMapping("/api/admin")
+@RestController
+@RequestMapping("/api/admin")
 public class AdminController {
 
     @Autowired
@@ -16,7 +17,7 @@ public class AdminController {
 
     @GetMapping("/demo")
     public ResponseEntity<?> adminDemo() {
-        return ResponseEntity.ok("✅ Bienvenido ADMIN, acceso concedido");
+        return ResponseEntity.ok("Bienvenido ADMIN, acceso concedido");
     }
 
     @GetMapping("/users")

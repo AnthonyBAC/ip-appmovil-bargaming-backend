@@ -19,7 +19,7 @@ public class AuthController {
 
     private final UserService userService;
     private final JWTService jwtService;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(); // ✅ Definido aquí
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     public AuthController(UserService userService, JWTService jwtService) {
@@ -27,7 +27,6 @@ public class AuthController {
         this.jwtService = jwtService;
     }
 
-    // 🔹 Registrar nuevo usuario
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody UserCreateRequest request) {
         try {
@@ -48,7 +47,6 @@ public class AuthController {
         }
     }
 
-    // 🔹 Login
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest request) {
         try {
@@ -59,7 +57,6 @@ public class AuthController {
 
             User user = userOpt.get();
 
-            // ✅ Comparamos el hash con la contraseña ingresada
             if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                 return new ResponseEntity<>("Contraseña incorrecta", HttpStatus.UNAUTHORIZED);
             }
