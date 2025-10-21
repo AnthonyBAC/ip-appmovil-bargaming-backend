@@ -32,13 +32,11 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        // 🚫 Ignorar rutas públicas
         if (path.startsWith("/api/auth/login") || path.startsWith("/api/auth/register")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 🔐 Revisar encabezado Authorization
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -48,14 +46,12 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
 
-        // ⚠️ Validar token
         if (!jwtService.validateToken(token)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Token inválido o expirado");
             return;
         }
 
-        // ✅ Extraer claims
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(jwtService.getSecretKeyBytes())
                 .build()
@@ -65,10 +61,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         String email = claims.getSubject();
         String role = (String) claims.get("role");
 
-        // 🧠 Log para depuración
         System.out.println(">>> Token válido para: " + email + " con rol: " + role);
 
-        // Crear autoridad y registrar autenticación
         var authority = new SimpleGrantedAuthority(role);
         var authentication = new UsernamePasswordAuthenticationToken(
                 email,
@@ -76,7 +70,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 Collections.singletonList(authority));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Continuar con la cadena
         filterChain.doFilter(request, response);
     }
 }
