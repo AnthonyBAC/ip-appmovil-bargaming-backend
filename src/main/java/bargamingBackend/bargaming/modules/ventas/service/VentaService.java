@@ -31,7 +31,6 @@ public class VentaService {
         this.userRepository = userRepository;
     }
 
-    // Registrar una venta desde el carrito del cliente
     public Venta registrarVentaDesdeCarrito(Long clienteId) {
         User cliente = userRepository.findById(clienteId)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
@@ -40,7 +39,6 @@ public class VentaService {
         if (carrito.isEmpty())
             throw new RuntimeException("El carrito está vacío");
 
-        // Creamos la venta
         Venta venta = new Venta();
         venta.setCliente(cliente);
         venta.setEstado(EstadoVenta.PAGADA);
