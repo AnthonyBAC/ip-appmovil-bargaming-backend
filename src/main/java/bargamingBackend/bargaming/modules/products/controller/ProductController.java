@@ -15,11 +15,9 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final ImageProductService imageService;
 
     public ProductController(ProductService productService, ImageProductService imageService) {
         this.productService = productService;
-        this.imageService = imageService;
     }
 
     @GetMapping
@@ -53,13 +51,4 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}/imagenes")
-    public ResponseEntity<List<ImageProduct>> getImages(@PathVariable Long id) {
-        return ResponseEntity.ok(imageService.getImagesByProductId(id));
-    }
-
-    @PostMapping("/{id}/imagenes")
-    public ResponseEntity<ImageProduct> uploadImage(@PathVariable Long id, @RequestBody ImageProduct image) {
-        return ResponseEntity.ok(imageService.saveImageForProduct(id, image));
-    }
 }
