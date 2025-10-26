@@ -26,7 +26,8 @@ public class ProductController {
             @RequestParam("marca") String marca,
             @RequestParam("categoria") String categoria,
             @RequestParam("precio") Integer precio,
-            @RequestParam(value = "recibeOfertas", required = false) Boolean recibeOfertas)
+            @RequestParam(value = "recibeOfertas", required = false) Boolean recibeOfertas,
+            Principal principal)
 
             throws IOException {
 
@@ -45,10 +46,10 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('VENDEDOR') or hasRole('ADMIN')")
-    public ResponseEntity<List<Product>> getMyProducts(Principal principal) {
-        List<Product> products = productService.getProductsBySeller(principal.getName());
+    @GetMapping("/vendedor/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Product>> getProductsBySeller(@PathVariable Long id) {
+        List<Product> products = productService.getProductsBySeller(id);
         return ResponseEntity.ok(products);
     }
 }
