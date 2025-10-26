@@ -1,10 +1,10 @@
 package bargamingBackend.bargaming.modules.products.service;
 
-import bargamingBackend.bargaming.modules.products.model.Product;
-import bargamingBackend.bargaming.modules.products.repository.ProductRepository;
 import bargamingBackend.bargaming.common.enums.Role;
 import bargamingBackend.bargaming.modules.auth.model.User;
 import bargamingBackend.bargaming.modules.auth.repository.UserRepository;
+import bargamingBackend.bargaming.modules.products.model.Product;
+import bargamingBackend.bargaming.modules.products.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,17 +12,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
 
     @Autowired
-    private final ProductRepository productRepository;
-
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+    private ProductRepository productRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -31,9 +26,9 @@ public class ProductService {
     private CloudinaryService cloudinaryService;
 
     public Product createProductWithImage(MultipartFile file, String nombre, String marca,
-                                      String categoria, Integer precio,
-                                      Boolean recibeOfertas, Principal principal)
-                                      throws IOException {
+            String categoria, Integer precio,
+            Boolean recibeOfertas, Principal principal)
+            throws IOException {
 
         String imageUrl = cloudinaryService.uploadImage(file);
 
@@ -66,10 +61,16 @@ public class ProductService {
         return productRepository.findByVendedor(vendedor);
     }
 
-    public void deleteProduct(Long id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + id));
+    public Product createProduct(Product product, Principal principal) {
+        User vendedor = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Vendedor no encontrado"));
 
-        productRepository.delete(product);
+        if (vendedor.getRole() != Role.VENDEDOR && vendedor.getRole() != Role.ADMIN) {
+            throw new RuntimeException("El usuario no tiene permisos para publicar productos");
+        }
+
+        product.setVendedor(vendedor);
+        return productRepository.save(product);
     }
+
 }

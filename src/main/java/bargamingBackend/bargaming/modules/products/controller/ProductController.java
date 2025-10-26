@@ -37,6 +37,16 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
+    @PostMapping("/create")
+    @PreAuthorize("hasRole('VENDEDOR') or hasRole('ADMIN')")
+    public ResponseEntity<Product> createProduct(
+            @RequestBody Product product,
+            Principal principal) {
+
+        Product savedProduct = productService.createProduct(product, principal);
+        return ResponseEntity.ok(savedProduct);
+    }
+
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
@@ -49,14 +59,4 @@ public class ProductController {
         List<Product> products = productService.getProductsBySeller(id);
         return ResponseEntity.ok(products);
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-    try {
-        productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
-    } catch (RuntimeException e) {
-        return ResponseEntity.notFound().build();
-    }
-}
 }
