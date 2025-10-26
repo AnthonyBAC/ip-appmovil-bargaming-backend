@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/productos")
@@ -27,15 +28,11 @@ public class ProductController {
             @RequestParam("categoria") String categoria,
             @RequestParam("precio") Integer precio,
             @RequestParam(value = "recibeOfertas", required = false) Boolean recibeOfertas,
-            Principal principal)
-
-            throws IOException {
-
+            Principal principal) throws IOException {
 
         Product product = productService.createProductWithImage(
                 file, nombre, marca, categoria, precio,
-                recibeOfertas != null && recibeOfertas
-        );
+                recibeOfertas != null && recibeOfertas, principal);
 
         return ResponseEntity.ok(product);
     }
@@ -47,7 +44,7 @@ public class ProductController {
     }
 
     @GetMapping("/vendedor/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('VENDEDOR' or hasRole('ADMIN'))")
     public ResponseEntity<List<Product>> getProductsBySeller(@PathVariable Long id) {
         List<Product> products = productService.getProductsBySeller(id);
         return ResponseEntity.ok(products);
