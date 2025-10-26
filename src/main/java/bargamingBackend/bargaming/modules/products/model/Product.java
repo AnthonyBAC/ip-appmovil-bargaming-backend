@@ -1,46 +1,41 @@
 package bargamingBackend.bargaming.modules.products.model;
 
-import bargamingBackend.bargaming.common.enums.EstadoProducto;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import bargamingBackend.bargaming.modules.auth.model.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "PRODUCTS")
-@SequenceGenerator(name = "product_seq", sequenceName = "product_seq", allocationSize = 1)
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_seq")
+    @SequenceGenerator(name = "product_seq", sequenceName = "product_seq", allocationSize = 1)
     private Long productId;
 
+    @Column(nullable = false)
     private String nombre;
+
+    @Column(nullable = false)
     private String marca;
+
+    @Column(nullable = false)
     private String categoria;
 
-    @Column(precision = 10)
+    @Column(nullable = false)
     private Integer precio;
 
-    @Column(name = "vendedor_id")
-    private Long vendedorId;
+    private Boolean recibeOfertas;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private EstadoProducto estado = EstadoProducto.DISPONIBLE;
+    @Column(length = 500)
+    private String imageUrl;
 
-    @Column(name = "recibe_ofertas")
-    private Boolean recibeOfertas = false;
+    @ManyToOne
+    @JoinColumn(role = "VENDEDOR", referencedColumnName = "user_id")
+    private User vendedor;
 
-    // Relación 1:N con imágenes
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<ImageProduct> images = new ArrayList<>();
+    
 }

@@ -2,53 +2,44 @@ package bargamingBackend.bargaming.modules.products.service;
 
 import bargamingBackend.bargaming.modules.products.model.Product;
 import bargamingBackend.bargaming.modules.products.repository.ProductRepository;
+import bargamingBackend.bargaming.modules.auth.model.User;
+import bargamingBackend.bargaming.modules.auth.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
 
 @Service
 public class ProductService {
 
-    private final ProductRepository productRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+    @Autowired
+    private UserRepository userRepository;
 
-    public List<Product> getFilteredProducts(String categoria, String marca, String nombre) {
-        if (categoria != null)
-            return productRepository.findByCategoria(categoria);
-        if (marca != null)
-            return productRepository.findByMarca(marca);
-        if (nombre != null)
-            return productRepository.findByNombreContainingIgnoreCase(nombre);
-        return productRepository.findAll();
-    }
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
-    public Optional<Product> getProductById(Long id) {
-        return productRepository.findById(id);
-    }
+    public Product createProductWithImage(MultipartFile file, String nombre, String marca,
+                                          String categoria, Integer precio, Boolean recibeOfertas,
+                                          String emailVendedor) throws IOException {
 
-    public Product saveProduct(Product product) {
+        User vendedor = userRepository.findByEmail(emailVendedor)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        String imageUrl = cloudinaryService.uploadImage(file);
+
+        Product product = new Product();
+        product.setNombre(nombre);
+        product.setMarca(marca);
+        product.setCategoria(categoria);
+        product.setPrecio(precio);
+        product.setRecibeOfertas(recibeOfertas);
+        product.setImageUrl(imageUrl);
+        product.setVendedor(vendedor);
+
         return productRepository.save(product);
-    }
-
-    public Product updateProduct(Long id, Product updated) {
-        Product existing = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-
-        existing.setNombre(updated.getNombre());
-        existing.setMarca(updated.getMarca());
-        existing.setCategoria(updated.getCategoria());
-        existing.setPrecio(updated.getPrecio());
-        existing.setRecibeOfertas(updated.getRecibeOfertas());
-        existing.setEstado(updated.getEstado());
-
-        return productRepository.save(existing);
-    }
-
-    public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
     }
 }

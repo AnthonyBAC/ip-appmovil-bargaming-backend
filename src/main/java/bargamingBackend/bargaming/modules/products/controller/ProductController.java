@@ -1,54 +1,41 @@
 package bargamingBackend.bargaming.modules.products.controller;
 
-import bargamingBackend.bargaming.modules.products.model.ImageProduct;
 import bargamingBackend.bargaming.modules.products.model.Product;
-import bargamingBackend.bargaming.modules.products.service.ImageProductService;
 import bargamingBackend.bargaming.modules.products.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.io.IOException;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/productos")
-@CrossOrigin(origins = "*")
 public class ProductController {
 
-    private final ProductService productService;
+    @Autowired
+    private ProductService productService;
 
-    public ProductController(ProductService productService, ImageProductService imageService) {
-        this.productService = productService;
+    @PostMapping(value = "/create-with-image", consumes = "multipart/form-data")
+    @PreAuthorize("hasRole('VENDEDOR') or hasRole('ADMIN')")
+    public ResponseEntity<Product> createProductWithImage(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("nombre") String nombre,
+            @RequestParam("marca") String marca,
+            @RequestParam("categoria") String categoria,
+            @RequestParam("precio") Integer precio,
+            @RequestParam(value = "recibeOfertas", required = false) Boolean recibeOfertas)
+            
+            throws IOException {
+
+
+        Product product = productService.createProductWithImage(
+                file, nombre, marca, categoria, precio,
+                recibeOfertas != null && recibeOfertas
+        );
+
+        return ResponseEntity.ok(product);
     }
-
-    @GetMapping
-    public ResponseEntity<List<Product>> getAll(
-            @RequestParam(required = false) String categoria,
-            @RequestParam(required = false) String marca,
-            @RequestParam(required = false) String nombre) {
-        return ResponseEntity.ok(productService.getFilteredProducts(categoria, marca, nombre));
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Product> getById(@PathVariable Long id) {
-        return productService.getProductById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<Product> create(@RequestBody Product product) {
-        return ResponseEntity.ok(productService.saveProduct(product));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody Product product) {
-        return ResponseEntity.ok(productService.updateProduct(id, product));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
-    }
-
 }
