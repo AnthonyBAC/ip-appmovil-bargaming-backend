@@ -34,7 +34,7 @@ public class Product {
     private String imageUrl;
 
     @ManyToOne
-    @JoinColumn(role = VENDEDOR, referencedColumnName = "user_id")
+    @JoinColumn(name = "vendedor_id", referencedColumnName = "user_id")
     private User vendedor;
 
     
