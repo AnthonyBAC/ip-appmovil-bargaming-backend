@@ -23,11 +23,9 @@ public class ProductService {
     private CloudinaryService cloudinaryService;
 
     public Product createProductWithImage(MultipartFile file, String nombre, String marca,
-                                          String categoria, Integer precio, Boolean recibeOfertas,
-                                          String emailVendedor) throws IOException {
+                                          String categoria, Integer precio, Boolean recibeOfertas) 
+                                          throws IOException {
 
-        User vendedor = userRepository.findByEmail(emailVendedor)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         String imageUrl = cloudinaryService.uploadImage(file);
 
@@ -41,5 +39,15 @@ public class ProductService {
         product.setVendedor(vendedor);
 
         return productRepository.save(product);
+    }
+
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
+
+    public List<Product> getProductsBySeller(Integer userId) {
+        User vendedor = userRepository.findByVendedor(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return productRepository.findByVendedor(vendedor);
     }
 }

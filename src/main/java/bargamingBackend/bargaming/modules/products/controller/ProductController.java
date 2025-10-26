@@ -27,7 +27,7 @@ public class ProductController {
             @RequestParam("categoria") String categoria,
             @RequestParam("precio") Integer precio,
             @RequestParam(value = "recibeOfertas", required = false) Boolean recibeOfertas)
-            
+
             throws IOException {
 
 
@@ -37,5 +37,18 @@ public class ProductController {
         );
 
         return ResponseEntity.ok(product);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Product>> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('VENDEDOR') or hasRole('ADMIN')")
+    public ResponseEntity<List<Product>> getMyProducts(Principal principal) {
+        List<Product> products = productService.getProductsBySeller(principal.getName());
+        return ResponseEntity.ok(products);
     }
 }
