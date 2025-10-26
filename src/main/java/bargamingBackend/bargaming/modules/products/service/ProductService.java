@@ -61,6 +61,13 @@ public class ProductService {
         return productRepository.findByVendedor(vendedor);
     }
 
+    public void deleteProduct(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + id));
+
+        productRepository.delete(product);
+    }
+
     public Product createProduct(Product product, Principal principal) {
         User vendedor = userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Vendedor no encontrado"));
@@ -72,11 +79,5 @@ public class ProductService {
         product.setVendedor(vendedor);
         return productRepository.save(product);
     }
-
-     public void deleteProduct(Long id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + id));
-
-        productRepository.delete(product);
 
 }
