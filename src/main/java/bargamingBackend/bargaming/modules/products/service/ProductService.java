@@ -2,6 +2,7 @@ package bargamingBackend.bargaming.modules.products.service;
 
 import bargamingBackend.bargaming.modules.products.model.Product;
 import bargamingBackend.bargaming.modules.products.repository.ProductRepository;
+import bargamingBackend.bargaming.common.enums.Role;
 import bargamingBackend.bargaming.modules.auth.model.User;
 import bargamingBackend.bargaming.modules.auth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
+import java.util.List;
 
 @Service
 public class ProductService {
