@@ -23,11 +23,18 @@ public class ProductService {
     private CloudinaryService cloudinaryService;
 
     public Product createProductWithImage(MultipartFile file, String nombre, String marca,
-                                          String categoria, Integer precio, Boolean recibeOfertas) 
-                                          throws IOException {
-
+                                      String categoria, Integer precio,
+                                      Boolean recibeOfertas, Principal principal)
+                                      throws IOException {
 
         String imageUrl = cloudinaryService.uploadImage(file);
+
+        User vendedor = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Vendedor no encontrado"));
+
+        if (vendedor.getRole() != Role.VENDEDOR && vendedor.getRole() != Role.ADMIN) {
+            throw new RuntimeException("El usuario no tiene permisos para publicar productos");
+        }
 
         Product product = new Product();
         product.setNombre(nombre);
@@ -45,8 +52,8 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public List<Product> getProductsBySeller(Integer userId) {
-        User vendedor = userRepository.findByVendedor(userId)
+    public List<Product> getProductsBySeller(Long userId) {
+        User vendedor = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         return productRepository.findByVendedor(vendedor);
     }
