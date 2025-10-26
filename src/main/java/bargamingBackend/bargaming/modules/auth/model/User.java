@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import bargamingBackend.bargaming.common.enums.Role;
 
 @Entity
@@ -27,19 +30,24 @@ public class User {
     private String username;
 
     @Column(name = "email", nullable = false, length = 100, unique = true)
+    @JsonIgnore
     private String email;
 
     @Column(length = 255)
+    @JsonIgnore
     private String direccion;
 
     @Column(length = 20)
+    @JsonIgnore
     private String phone;
 
     @Column(nullable = false, length = 255)
+    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
+    @JsonIgnore
     private Role role;
 
 }

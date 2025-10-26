@@ -73,4 +73,10 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+     public void deleteProduct(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + id));
+
+        productRepository.delete(product);
+
 }
