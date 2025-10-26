@@ -14,11 +14,13 @@ public class CloudinaryService {
     private final Cloudinary cloudinary;
 
     public CloudinaryService() {
-        this.cloudinary = new Cloudinary(System.getenv("CLOUDINARY_URL"));
+
+        this.cloudinary = new Cloudinary(System.getenv(
+                "CLOUDINARY_URL"));
     }
 
+            
     public String uploadImage(MultipartFile file) throws IOException {
-        if (file.isEmpty()) throw new IllegalArgumentException("El archivo está vacío");
         Map<?, ?> result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
         return (String) result.get("secure_url");
     }
