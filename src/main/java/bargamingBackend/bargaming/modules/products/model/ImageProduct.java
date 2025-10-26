@@ -1,6 +1,5 @@
 package bargamingBackend.bargaming.modules.products.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,10 +17,13 @@ public class ImageProduct {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "image_product_seq")
     private Long imageId;
 
-    private String imageUrl;
+    @Column(nullable = false)
+    private String fileName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "producto_id")
-    @JsonBackReference
-    private Product product;
+    @Column(nullable = false, length = 1000)
+    private String url;
+
+    @Column(name = "product_id", nullable = false)
+    private Long productId;
+
 }
