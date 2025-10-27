@@ -55,6 +55,11 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    public Product getProductById(Long id) {
+    return productRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + id));
+    }
+
     public List<Product> getProductsBySeller(Long userId) {
         User vendedor = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
