@@ -54,7 +54,7 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    @CrossOrigin(origins = "*")
+    @CrossOrigin
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         Product product = productService.getProductById(id);
