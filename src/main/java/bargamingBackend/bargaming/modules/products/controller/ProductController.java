@@ -53,6 +53,13 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+        Product product = productService.getProductById(id);
+        return ResponseEntity.ok(product);
+    }
+
+
     @GetMapping("/vendedor/{id}")
     @PreAuthorize("hasRole('VENDEDOR' or hasRole('ADMIN'))")
     public ResponseEntity<List<Product>> getProductsBySeller(@PathVariable Long id) {
