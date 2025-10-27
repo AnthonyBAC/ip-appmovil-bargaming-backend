@@ -35,7 +35,7 @@ public class AuthController {
             user.setEmail(request.getEmail());
             user.setDireccion(request.getDireccion());
             user.setPhone(request.getPhone());
-            user.setPassword(passwordEncoder.encode(request.getPassword())); // ✅ Encriptar aquí
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setRole(request.getRole());
 
             User savedUser = userService.saveUser(user);
@@ -71,7 +71,8 @@ public class AuthController {
                     "message", "Login exitoso",
                     "token", token,
                     "email", user.getEmail(),
-                    "role", user.getRole()));
+                    "role", user.getRole(),
+                    "username", user.getUsername()));
 
         } catch (Exception e) {
             return ResponseEntity
