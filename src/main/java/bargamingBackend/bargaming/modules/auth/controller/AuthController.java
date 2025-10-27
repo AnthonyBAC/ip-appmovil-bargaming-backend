@@ -52,13 +52,17 @@ public class AuthController {
         try {
             var userOpt = userService.findByEmail(request.getEmail());
             if (userOpt.isEmpty()) {
-                return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("message", "Correo no registrado"));
             }
 
             User user = userOpt.get();
 
             if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-                return new ResponseEntity<>("Contraseña incorrecta", HttpStatus.UNAUTHORIZED);
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "Contraseña incorrecta"));
             }
 
             String token = jwtService.generateToken(user);
@@ -70,8 +74,9 @@ public class AuthController {
                     "role", user.getRole()));
 
         } catch (Exception e) {
-            return new ResponseEntity<>("Error al iniciar sesión: " + e.getMessage(),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Error al iniciar sesión: " + e.getMessage()));
         }
     }
 }
