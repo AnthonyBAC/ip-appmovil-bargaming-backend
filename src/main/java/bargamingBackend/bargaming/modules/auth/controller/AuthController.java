@@ -85,22 +85,14 @@ public class AuthController {
     }
 
     @PostMapping("/upload-profile")
-    public ResponseEntity<?> uploadProfileImage(@RequestParam("file") MultipartFile file, Principal principal) {
+    public ResponseEntity<?> uploadProfileImage(@RequestParam("file") MultipartFile file) {
         try {
-            User user = userService.findByEmail(principal.getName())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
             String imageUrl = userService.uploadProfileImage(file);
-            user.setProfileImageUrl(imageUrl);
-            userService.saveUser(user);
-
             return ResponseEntity.ok(Map.of(
                     "message", "Imagen subida correctamente",
                     "profileImageUrl", imageUrl));
-
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "Error al subir imagen: " + e.getMessage()));
         }
     }
