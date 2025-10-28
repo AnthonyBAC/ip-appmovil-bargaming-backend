@@ -36,9 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
 
                         // Upload profile: cualquier autenticado
-                        .requestMatchers("/api/auth/upload-profile").hasAuthority("CLIENTE")
-                        .requestMatchers("/api/auth/upload-profile").hasAuthority("VENDEDOR")
-                        .requestMatchers("/api/auth/upload-profile").hasAuthority("ADMIN")
+                        .requestMatchers("/api/auth/upload-profile").permitAll()
 
                         // Todo lo demás requiere login
                         .anyRequest().authenticated())
