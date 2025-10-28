@@ -25,13 +25,21 @@ public class SecurityConfig {
                 .cors(cors -> cors.disable())
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
                 .authorizeHttpRequests(auth -> auth
+                        // Endpoints públicos
                         .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
-                        .requestMatchers("/api/client/**").hasAuthority("CLIENTE").requestMatchers("/api/seller/**")
-                        .hasAuthority("VENDEDOR").requestMatchers("/api/admin/**").hasAuthority("ADMIN").anyRequest()
-                        .authenticated())
+
+                        // Endpoints protegidos por rol
+                        .requestMatchers("/api/client/**").hasAuthority("CLIENTE")
+                        .requestMatchers("/api/seller/**").hasAuthority("VENDEDOR")
+                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+
+                        // Upload profile: cualquier autenticado
+                        .requestMatchers("/api/auth/upload-profile").authenticated()
+
+                        // Todo lo demás requiere login
+                        .anyRequest().authenticated())
 
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
