@@ -90,8 +90,7 @@ public class AuthController {
             User user = userService.findByEmail(principal.getName())
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            String imageUrl = userService.uploadProfileImage(file, user.getEmail());
-
+            String imageUrl = userService.uploadProfileImage(file);
             user.setProfileImageUrl(imageUrl);
             userService.saveUser(user);
 

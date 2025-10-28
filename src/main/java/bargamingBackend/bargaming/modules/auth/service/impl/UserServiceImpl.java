@@ -67,8 +67,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String uploadProfileImage(MultipartFile file, String email) throws IOException {
-        String uniqueId = "profile_" + email.replace("@", "_").replace(".", "_");
-        return cloudinaryService.uploadImage(file, uniqueId);
+    public String uploadProfileImage(MultipartFile file) throws IOException {
+        return cloudinaryService.uploadImage(file);
+
     }
 }
