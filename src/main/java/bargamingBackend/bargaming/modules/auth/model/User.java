@@ -50,4 +50,11 @@ public class User {
     @JsonIgnore
     private Role role;
 
+    @Column(name = "profile_image_url", length = 500)
+    private String profileImageUrl;
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
 }
