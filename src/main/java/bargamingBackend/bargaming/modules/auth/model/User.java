@@ -47,7 +47,6 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    @JsonIgnore
     private Role role;
 
     @Column(name = "profile_image_url", length = 500)
