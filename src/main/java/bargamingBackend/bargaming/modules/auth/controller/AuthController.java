@@ -87,14 +87,11 @@ public class AuthController {
     @PostMapping("/upload-profile")
     public ResponseEntity<?> uploadProfileImage(@RequestParam("file") MultipartFile file, Principal principal) {
         try {
-            // Obtener usuario autenticado
             User user = userService.findByEmail(principal.getName())
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-            // Subir imagen (Cloudinary o local)
-            String imageUrl = userService.uploadProfileImage(file);
+            String imageUrl = userService.uploadProfileImage(file, user.getEmail());
 
-            // Guardar en DB
             user.setProfileImageUrl(imageUrl);
             userService.saveUser(user);
 
