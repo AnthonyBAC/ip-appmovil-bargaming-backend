@@ -6,12 +6,15 @@ import bargamingBackend.bargaming.modules.auth.model.User;
 import bargamingBackend.bargaming.modules.auth.service.JWTService;
 import bargamingBackend.bargaming.modules.auth.service.UserService;
 import jakarta.validation.Valid;
+
+import java.security.Principal;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -80,4 +83,30 @@ public class AuthController {
                     .body(Map.of("message", "Error al iniciar sesión: " + e.getMessage()));
         }
     }
+
+    @PostMapping("/upload-profile")
+    public ResponseEntity<?> uploadProfileImage(@RequestParam("file") MultipartFile file, Principal principal) {
+        try {
+            // Obtener usuario autenticado
+            User user = userService.findByEmail(principal.getName())
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            // Subir imagen (Cloudinary o local)
+            String imageUrl = userService.uploadProfileImage(file);
+
+            // Guardar en DB
+            user.setProfileImageUrl(imageUrl);
+            userService.saveUser(user);
+
+            return ResponseEntity.ok(Map.of(
+                    "message", "Imagen subida correctamente",
+                    "profileImageUrl", imageUrl));
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Error al subir imagen: " + e.getMessage()));
+        }
+    }
+
 }

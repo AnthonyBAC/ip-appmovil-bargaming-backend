@@ -4,8 +4,11 @@ import bargamingBackend.bargaming.common.enums.Role;
 import bargamingBackend.bargaming.modules.auth.model.User;
 import bargamingBackend.bargaming.modules.auth.repository.UserRepository;
 import bargamingBackend.bargaming.modules.auth.service.UserService;
+import bargamingBackend.bargaming.modules.products.service.CloudinaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,10 +16,12 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final CloudinaryService cloudinaryService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, CloudinaryService cloudinaryService) {
         this.userRepository = userRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Override
@@ -59,5 +64,10 @@ public class UserServiceImpl implements UserService {
 
         user.setRole(newRole);
         return userRepository.save(user);
+    }
+
+    @Override
+    public String uploadProfileImage(MultipartFile file) throws IOException {
+        return cloudinaryService.uploadImage(file);
     }
 }
